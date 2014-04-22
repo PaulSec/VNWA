@@ -1,0 +1,15 @@
+<% include header.ejs %>
+
+    <div class="container form-user">
+
+      <form class="form-signin" action="/login" method="POST">
+        <h2 class="form-signin-heading">Please Log in</h2>
+        <input type="text" class="input-block-level" placeholder="Username" name="username">
+        <input type="password" class="input-block-level" placeholder="Password" name="password"><br />
+        <button class="btn btn-large btn-primary" type="submit">Log in</button>
+        <a href="/sign-up">Don't have an account ?</a>
+      </form>
+
+    </div> <!-- /container -->
+
+<% include footer.ejs %>
