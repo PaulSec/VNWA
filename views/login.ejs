@@ -2,6 +2,11 @@
 
     <div class="container form-user">
 
+        <% if (message != null && message != "") { %>
+            <div class="alert alert-danger">
+                <%= message %>
+            </div>
+        <% } %>
       <form class="form-signin" action="/login" method="POST">
         <h2 class="form-signin-heading">Please Log in</h2>
         <input type="text" class="input-block-level" placeholder="Username" name="username">

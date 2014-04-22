@@ -3,7 +3,9 @@ var express = require('express');
 var http = require('http');
 var sys = require('sys')
 var exec = require('child_process').exec;
+
 var utils = require('./lib/utils.js');
+var model = require('./lib/model.js');
 
 var app = express();
 var server = http.createServer(app); 
@@ -64,15 +66,53 @@ app.get('/login', function(req, res) {
     }
 
     res.render('login.ejs', {
-        isConnected: false
+        isConnected: false,
+        message: req.session.message
     });
+
+    delete req.session.message;
+});
+
+// Login
+app.post('/login', function(req, res) {
+
+    isConnected = req.session.isConnected;
+    if (isConnected) {
+        utils.redirect(req, res, '/');
+    } else {
+        username = req.body.username;
+        password = req.body.password;
+        if (username == undefined || username == null || username =="") {
+            utils.redirect(req, res, '/login')
+        } else if (password == undefined || password == null || password =="") {
+            utils.redirect(req, res, '/login')
+        }
+
+        model.loginUser(username, password, function(returnUser) {
+            if (returnUser && returnUser.password == password) {
+                console.log('Login OK with user:' + username);
+                req.session.username = returnUser.username;
+                req.session.isAdmin = returnUser.is_admin;
+                req.session.isConnected = true;
+                utils.redirect(req, res, '/');
+            } else {
+                console.log('Failed login attempt with user:' + username);
+                req.session.isConnected = false;
+                req.session.message = 'Failed login attempt with user:' + username
+                utils.redirect(req, res, '/login');
+            }
+        });
+    }
 });
 
 // Sign up
 app.get('/sign-up', function(req, res) {
+    console.log(req.session.message);
     res.render('sign-up.ejs', {
-        isConnected: false
+        isConnected: false,
+        message: req.session.message
     });
+    delete req.session.message;
 });
 
 // Create an account
@@ -85,8 +125,46 @@ app.post('/sign-up', function(req, res) {
         utils.redirect(req, res, '/sign-up')
     }
 
-    console.log('We created user: ' + username);
-    utils.redirect('/login');
+    model.getUser(username, function (user) {
+        if (user == null) {
+            model.createUser(username, password, false);
+            utils.redirect(req, res, '/login');
+        } else {
+            req.session.message = "The user " + username + " already exists.."
+            utils.redirect(req, res, '/sign-up');
+        }
+    })
+    
+    
+});
+
+// bootstrap help 
+app.get('/bootstrap', function(req, res) {
+    res.render('bootstrap.ejs', {
+        isConnected: false
+    });
+});
+
+// List users
+app.get('/users', function(req, res) {
+    if (!req.session.isConnected) {
+        utils.redirect(req, res, '/login');
+    } else {
+        model.getUsers(function(usersModel) {
+            res.render('users.ejs', {
+                isConnected: req.session.isConnected,
+                users: usersModel
+            });    
+        });
+    }
+});
+
+// logout
+app.get('/logout', function(req, res) {
+    delete req.session.isConnected;
+    delete req.session.username;
+    delete req.session.isAdmin;
+    utils.redirect(req, res, '/');
 });
 
 server.listen(8080);

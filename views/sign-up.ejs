@@ -1,7 +1,11 @@
 <% include header.ejs %>
 
-    <div class="container form-user">
-
+    <div class="container">
+        <% if (message != null && message != "") { %>
+            <div class="alert alert-danger">
+                <%= message %>
+            </div>
+        <% } %>
       <form class="form-signin" action="/sign-up" method="POST">
         <h2 class="form-signin-heading">Create an account !</h2>
         <input type="text" class="input-block-level" placeholder="Username" name="username">

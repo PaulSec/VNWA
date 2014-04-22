@@ -1,0 +1,24 @@
+<% include header.ejs %>
+
+    <div class="container">
+        <h2>Users on the platform</h2>
+
+        <table class="table">  
+            <thead>  
+                <tr>
+                    <th>Name</th>
+                    <th>Administrator</th>
+                </tr>  
+            </thead>  
+            <tbody>  
+            <% for(var i = 0; i < users.length; i++) { %>
+                <tr>
+                    <td><%= users[i].username %></td>
+                    <td><%= users[i].is_admin == true %></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div> <!-- /container -->
+
+<% include footer.ejs %>
