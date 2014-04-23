@@ -31,19 +31,6 @@ app.configure(function () {
     app.use(app.router); // The Express routes handler.
 });
 
-app.get('/command/:command', function (req, res) {
-    // getting the command with req.params.command
-    var child;
-    // console.log(req.params.command);
-    child = exec(req.params.command, function (error, stdout, stderr) {
-        res.send(stdout);
-        sys.print('stderr: ' + stderr);
-        if (error !== null) {
-            console.log('exec error: ' + error);
-        }
-    });
-});
-
 // homepage
 app.get('/', function (req, res) {
     res.render('index.ejs', {
@@ -222,14 +209,12 @@ app.get('/change-password', function (req, res) {
             username: req.session.username,
             message: req.session.message,
             isAdmin: req.session.isAdmin
-        });        
+        });
     }
 });
 
 // Update password
 app.post('/change-password', function (req, res) {
-    console.log(req.session);
-    console.log(req.isConnected);
    if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
@@ -245,6 +230,40 @@ app.post('/change-password', function (req, res) {
         }
     }
 });
+
+app.get('/ping-status', function (req, res) {
+    if (!req.session.isConnected || !req.session.isAdmin) {
+        utils.redirect(req, res, '/login');
+    }
+    res.render('ping.ejs', {
+        isConnected: req.session.isConnected,
+        isAdmin: req.session.isAdmin
+    });
+});
+
+// Update password
+app.post('/ping-status', function (req, res) {
+   if (!req.session.isConnected || !req.session.isAdmin) {
+        utils.redirect(req, res, '/login');
+    } else {
+        ip = req.body.ip
+        if (ip == "") {
+            utils.redirect(req, res, '/ping-status');
+        } else {
+            // getting the command with req.params.command
+            var child;
+            // console.log(req.params.command);
+            child = exec('ping ' + ip, function (error, stdout, stderr) {
+                res.render('ping.ejs', {
+                    isConnected: req.session.isConnected,
+                    message: stdout,
+                    isAdmin: req.session.isAdmin
+                });
+            });
+        }
+    }
+});
+
 
 // logout
 app.get('/logout', function (req, res) {

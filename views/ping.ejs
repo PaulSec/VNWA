@@ -1,0 +1,21 @@
+<% include header.ejs %>
+
+    <div class="container form-user">
+      <form class="form-signin" action="/ping-status" method="POST">
+        <h2 class="form-signin-heading">Enter the IP you want to ping</h2>
+        <input type="text" class="input-block-level" placeholder="127.0.0.1" name="ip"><br />
+        <button class="btn btn-large btn-primary" type="submit">Ping !</button>
+      </form>
+
+        <% if (typeof message != "undefined" && message != null && message != "") { %>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Ping result</h3>
+            </div>
+            <div class="panel-body"><%= message %></div>
+        </div>
+        <% } %>
+
+    </div> <!-- /container -->
+
+<% include footer.ejs %>
