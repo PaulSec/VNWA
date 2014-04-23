@@ -10,13 +10,13 @@ var model = require('./lib/model.js');
 var app = express();
 var server = http.createServer(app); 
 
-var logger = function(req, res, next) {
+var logger = function (req, res, next) {
     console.log(req.connection.remoteAddress + " tried to access : " + req.url);
     next(); // Passing the request to the next handler in the stack.
 }
 
 // Configuration
-app.configure(function() {
+app.configure(function () {
     // Session management
     app.use(express.cookieParser());
     app.use(express.session({secret: 'privateKeyForSession'}));
@@ -31,7 +31,7 @@ app.configure(function() {
     app.use(app.router); // The Express routes handler.
 });
 
-app.get('/command/:command', function(req, res) {
+app.get('/command/:command', function (req, res) {
     // getting the command with req.params.command
     var child;
     // console.log(req.params.command);
@@ -45,21 +45,21 @@ app.get('/command/:command', function(req, res) {
 });
 
 // homepage
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
     res.render('index.ejs', {
         isConnected: req.session.isConnected
     });
 });
 
 // About page
-app.get('/about', function(req, res) {
+app.get('/about', function (req, res) {
     res.render('about.ejs', {
         isConnected: req.session.isConnected
     });
 });
 
 // Login
-app.get('/login', function(req, res) {
+app.get('/login', function (req, res) {
     isConnected = req.session.isConnected;
     if (isConnected) {
         utils.redirect(req, res, '/');
@@ -74,7 +74,7 @@ app.get('/login', function(req, res) {
 });
 
 // Login
-app.post('/login', function(req, res) {
+app.post('/login', function (req, res) {
 
     isConnected = req.session.isConnected;
     if (isConnected) {
@@ -88,7 +88,7 @@ app.post('/login', function(req, res) {
             utils.redirect(req, res, '/login')
         }
 
-        model.loginUser(username, password, function(returnUser) {
+        model.loginUser(username, password, function (returnUser) {
             if (returnUser && returnUser.password == password) {
                 console.log('Login OK with user:' + username);
                 req.session.username = returnUser.username;
@@ -106,8 +106,7 @@ app.post('/login', function(req, res) {
 });
 
 // Sign up
-app.get('/sign-up', function(req, res) {
-    console.log(req.session.message);
+app.get('/sign-up', function (req, res) {
     res.render('sign-up.ejs', {
         isConnected: false,
         message: req.session.message
@@ -116,7 +115,7 @@ app.get('/sign-up', function(req, res) {
 });
 
 // Create an account
-app.post('/sign-up', function(req, res) {
+app.post('/sign-up', function (req, res) {
     username = req.body.username;
     password = req.body.password;
     if (username == undefined || username == null || username =="") {
@@ -134,23 +133,21 @@ app.post('/sign-up', function(req, res) {
             utils.redirect(req, res, '/sign-up');
         }
     })
-    
-    
 });
 
 // bootstrap help 
-app.get('/bootstrap', function(req, res) {
+app.get('/bootstrap', function (req, res) {
     res.render('bootstrap.ejs', {
         isConnected: false
     });
 });
 
 // List users
-app.get('/users', function(req, res) {
+app.get('/users', function (req, res) {
     if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
-        model.getUsers(function(usersModel) {
+        model.getUsers(function (usersModel) {
             res.render('users.ejs', {
                 isConnected: req.session.isConnected,
                 users: usersModel
@@ -159,8 +156,90 @@ app.get('/users', function(req, res) {
     }
 });
 
+// Get messages from one specific user
+app.get('/messages', function (req, res) {
+   if (!req.session.isConnected) {
+        utils.redirect(req, res, '/login');
+    } else {
+        model.getMessages(req.session.username, function (messages) {
+            res.render('messages.ejs', {
+                isConnected: req.session.isConnected,
+                messages: messages
+            });
+        });
+    }
+});
+
+// Get messages from one specific user
+app.get('/send-message', function (req, res) {
+   if (!req.session.isConnected) {
+        utils.redirect(req, res, '/login');
+    } else {
+        model.getUsers(function (users) {
+            res.render('send-message.ejs', {
+                isConnected: req.session.isConnected,
+                users: users,
+                username: req.session.username,
+                message: req.session.message
+            });
+        });
+    }
+});
+
+// Send message
+app.post('/send-message', function (req, res) {
+   if (!req.session.isConnected) {
+        utils.redirect(req, res, '/login');
+    } else {
+        from = req.session.username;
+        to = req.body.to; 
+        message = req.body.message;
+
+        if (to == null || to == undefined || to =="") {
+            req.session.message = "An error happened while sending the message..";
+            utils.redirect(req, res, '/send-message');
+        } else if (message == null || message == undefined || message =="") {
+            req.session.message = "An error happened while sending the message..";
+            utils.redirect(req, res, '/send-message');
+        } else {
+            model.createMessage(from, to, message);
+            utils.redirect(req, res, '/');    
+        }
+    }
+});
+
+app.get('/change-password', function (req, res) {
+   if (!req.session.isConnected) {
+        utils.redirect(req, res, '/login');
+    } else {
+        res.render('change-password.ejs', {
+            isConnected: req.session.isConnected,
+            username: req.session.username,
+            message: req.session.message
+        });        
+    }
+});
+
+// Update password
+app.post('/change-password', function (req, res) {
+   if (!req.session.isConnected) {
+        utils.redirect(req, res, '/login');
+    } else {
+        username = req.session.username;
+        password = req.body.password;
+
+        if (password == null || password == undefined || password =="") {
+            req.session.message = "An error happened while updating your password..";
+            utils.redirect(req, res, '/change-password');
+        } else {
+            model.changePassword(username, password);
+            utils.redirect(req, res, '/');    
+        }
+    }
+});
+
 // logout
-app.get('/logout', function(req, res) {
+app.get('/logout', function (req, res) {
     delete req.session.isConnected;
     delete req.session.username;
     delete req.session.isAdmin;

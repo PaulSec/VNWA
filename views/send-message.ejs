@@ -1,0 +1,24 @@
+<% include header.ejs %>
+
+    <div class="container form-user">
+        <% if (message != null && message != "") { %>
+            <div class="alert alert-danger">
+                <%= message %>
+            </div>
+        <% } %>        
+        <form class="form-signin" action="/send-message" method="POST">
+            <h2 class="form-signin-heading">Send message</h2>
+            <select class="form-control" name="to">
+            <% for(var i = 0; i < users.length; i++) { %>
+                <% if (users[i].username != username) { %>
+                <option><%= users[i].username %></option>
+                <% } %>
+            <% } %>
+            </select><br />
+            <textarea name="message" class="form-control" rows="3"></textarea><br />
+            <button class="btn btn-large btn-primary" type="submit">Send</button>
+        </form>
+    </div> <!-- /container -->
+
+
+<% include footer.ejs %>

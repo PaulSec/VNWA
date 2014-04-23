@@ -1,0 +1,24 @@
+<% include header.ejs %>
+
+    <div class="container">
+        <h2>My Messages <i style="font-size:20px;">(<a href="/send-message">Send message</a>)</i></h2>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+            <% for(var i = 0; i < messages.length; i++) { %>
+                <tr>
+                    <td><%= messages[i].from %></td>
+                    <td><%= messages[i].message %></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div> <!-- /container -->
+
+<% include footer.ejs %>
