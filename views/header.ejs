@@ -38,6 +38,9 @@
           <ul class="nav navbar-nav">
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
+            <% if (typeof isAdmin != "undefined" && isAdmin) { %>
+            <li><a href="/ping-status">Ping Servers</a></li>
+            <% } %>
             <% if (isConnected) { %>
             <li><a href="/change-password">Change Password</a></li>
             <li><a href="/messages">Messages</a></li>

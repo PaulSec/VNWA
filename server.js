@@ -47,14 +47,16 @@ app.get('/command/:command', function (req, res) {
 // homepage
 app.get('/', function (req, res) {
     res.render('index.ejs', {
-        isConnected: req.session.isConnected
+        isConnected: req.session.isConnected,
+        isAdmin: req.session.isAdmin
     });
 });
 
 // About page
 app.get('/about', function (req, res) {
     res.render('about.ejs', {
-        isConnected: req.session.isConnected
+        isConnected: req.session.isConnected,
+        isAdmin: req.session.isAdmin
     });
 });
 
@@ -150,7 +152,8 @@ app.get('/users', function (req, res) {
         model.getUsers(function (usersModel) {
             res.render('users.ejs', {
                 isConnected: req.session.isConnected,
-                users: usersModel
+                users: usersModel,
+                isAdmin: req.session.isAdmin
             });    
         });
     }
@@ -164,7 +167,8 @@ app.get('/messages', function (req, res) {
         model.getMessages(req.session.username, function (messages) {
             res.render('messages.ejs', {
                 isConnected: req.session.isConnected,
-                messages: messages
+                messages: messages,
+                isAdmin: req.session.isAdmin
             });
         });
     }
@@ -180,7 +184,8 @@ app.get('/send-message', function (req, res) {
                 isConnected: req.session.isConnected,
                 users: users,
                 username: req.session.username,
-                message: req.session.message
+                message: req.session.message,
+                isAdmin: req.session.isAdmin
             });
         });
     }
@@ -215,13 +220,16 @@ app.get('/change-password', function (req, res) {
         res.render('change-password.ejs', {
             isConnected: req.session.isConnected,
             username: req.session.username,
-            message: req.session.message
+            message: req.session.message,
+            isAdmin: req.session.isAdmin
         });        
     }
 });
 
 // Update password
 app.post('/change-password', function (req, res) {
+    console.log(req.session);
+    console.log(req.isConnected);
    if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
@@ -246,4 +254,4 @@ app.get('/logout', function (req, res) {
     utils.redirect(req, res, '/');
 });
 
-server.listen(8080);
+server.listen(8081);
