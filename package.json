@@ -1,0 +1,25 @@
+{
+  "name": "vnwa",
+  "version": "0.0.0",
+  "description": "VNWA ====",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/PaulSec/VNWA.git"
+  },
+  "author": "Paul A.",
+  "license": "MIT License",
+  "bugs": {
+    "url": "https://github.com/PaulSec/VNWA/issues"
+  },
+  "homepage": "https://github.com/PaulSec/VNWA",
+  "dependencies": {
+    "express": "^3.5.2",
+    "ejs": "^1.0.0",
+    "mongoose": "^3.8.8"
+  }
+}
