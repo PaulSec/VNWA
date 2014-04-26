@@ -3,6 +3,7 @@ var express = require('express');
 var http = require('http');
 var sys = require('sys')
 var exec = require('child_process').exec;
+var crypto = require('crypto');
 
 var utils = require('./lib/utils.js');
 var model = require('./lib/model.js');
@@ -77,7 +78,8 @@ app.post('/login', function (req, res) {
             utils.redirect(req, res, '/login')
         }
 
-        model.loginUser(username, password, function (returnUser) {
+        model.getUser(username, function (returnUser) {
+            password = crypto.createHash('sha256').update(password).digest('hex');
             if (returnUser && returnUser.password == password) {
                 console.log('Login OK with user:' + username);
                 req.session.username = returnUser.username;
