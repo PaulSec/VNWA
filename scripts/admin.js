@@ -1,9 +1,19 @@
 // Example using HTTP POST operation
-var page = require('webpage').create(),
-    server = 'http://127.0.0.1:8081/login',
-    data = 'username=admin&password=password';
+var casper = require('casper').create();
 
-var matches_array = []
+casper.start().thenOpen('http://127.0.0.1:8081/login', {
+    method: 'post',
+    data: 'username=admin&password=password'
+}).thenClick('.navbar a', function() {
+
+}).back();
+
+casper.run(function() {
+    this.debugPage();
+    this.exit();
+});
+/*
+var matches_array = [];
 
 page.open(server, 'post', data, function (status) {
     if (status !== 'success') {
@@ -13,7 +23,7 @@ page.open(server, 'post', data, function (status) {
             var table = page.evaluate(function () {
                 return document.getElementsByTagName('table')[0];
             });
-            // console.log(table);
+            console.log(table);
             matches_array = table.innerHTML.match(/(http:\/\/[-\/\.\w:0-9\?&]+)/gi);
             console.log(matches_array);
             if (matches_array.length > 0) {
@@ -53,3 +63,4 @@ function sleep(milliseconds) {
     }
 }
 
+*/
