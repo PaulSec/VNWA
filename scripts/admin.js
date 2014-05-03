@@ -13,15 +13,13 @@ page.open(server, 'post', data, function (status) {
             var table = page.evaluate(function () {
                 return document.getElementsByTagName('table')[0];
             });
-            // console.log(table);
+
             matches_array = table.innerHTML.match(/(http:\/\/[-\/\.\w:0-9\?&]+)/gi);
             console.log(matches_array);
             if (matches_array.length > 0) {
                 sleep(4000);
                 process();
             }
-
-            // phantom.exit(); ?????
         });
     }
 });
@@ -43,7 +41,6 @@ function accessPage(url, process) {
     });
 }
 
-
 function sleep(milliseconds) {
     var start = new Date().getTime();
     for (var i = 0; i < 1e7; i++) {
@@ -52,4 +49,3 @@ function sleep(milliseconds) {
         }
     }
 }
-
