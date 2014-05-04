@@ -275,4 +275,12 @@ app.get('/logout', function (req, res) {
     utils.redirect(req, res, '/');
 });
 
+// hint page, found it?
+app.get('/hint', function (req, res) {
+    res.render('hint.ejs', {
+        isConnected: req.session.isConnected,
+        isAdmin: req.session.isAdmin
+    });
+});
+
 server.listen(8081);
