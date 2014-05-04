@@ -1,8 +1,47 @@
-<% include header.ejs %>
 
-    <div class="container form-user">
-      <form class="form-signin" action="/ping-status" method="POST">
-        <h2 class="form-signin-heading">Enter the IP you want to ping</h2>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="shortcut icon" href="../../assets/ico/favicon.ico"> -->
+
+    <title>Secure Web App</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/css/theme.css" rel="stylesheet">
+    <link href="/css/theme-secure-web-app.css" rel="stylesheet">
+  </head>
+
+  <body role="document">
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+          </button>
+          <a class="navbar-brand" href="/">Internal admin tools</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+    <div class="container">
+      <form class="form-signin" action="/" method="POST">
+        <h4 class="form-signin-heading">Enter the IP you want to ping</h4>
         <input type="text" class="input-block-level" placeholder="127.0.0.1" name="ip"><br />
         <button class="btn btn-large btn-primary" type="submit">Ping !</button>
       </form>
