@@ -13,6 +13,7 @@ var server = http.createServer(app);
 
 var logger = function (req, res, next) {
     console.log(req.connection.remoteAddress + " tried to access : " + req.url);
+
     next(); // Passing the request to the next handler in the stack.
 }
 
@@ -233,39 +234,13 @@ app.post('/change-password', function (req, res) {
     }
 });
 
-app.get('/ping-status', function (req, res) {
-    if (!req.session.isConnected || !req.session.isAdmin) {
-        utils.redirect(req, res, '/login');
-    }
-    res.render('ping.ejs', {
+// hint page, found it?
+app.get('/hint', function (req, res) {
+    res.render('hint.ejs', {
         isConnected: req.session.isConnected,
         isAdmin: req.session.isAdmin
     });
 });
-
-// Update password
-app.post('/ping-status', function (req, res) {
-   if (!req.session.isConnected || !req.session.isAdmin) {
-        utils.redirect(req, res, '/login');
-    } else {
-        ip = req.body.ip
-        if (ip == "") {
-            utils.redirect(req, res, '/ping-status');
-        } else {
-            // getting the command with req.params.command
-            var child;
-            // console.log(req.params.command);
-            child = exec('ping ' + ip, function (error, stdout, stderr) {
-                res.render('ping.ejs', {
-                    isConnected: req.session.isConnected,
-                    message: stdout,
-                    isAdmin: req.session.isAdmin
-                });
-            });
-        }
-    }
-});
-
 
 // logout
 app.get('/logout', function (req, res) {
@@ -273,14 +248,6 @@ app.get('/logout', function (req, res) {
     delete req.session.username;
     delete req.session.isAdmin;
     utils.redirect(req, res, '/');
-});
-
-// hint page, found it?
-app.get('/hint', function (req, res) {
-    res.render('hint.ejs', {
-        isConnected: req.session.isConnected,
-        isAdmin: req.session.isAdmin
-    });
 });
 
 server.listen(8081);
