@@ -11,14 +11,14 @@ var model = require('./lib/model.js');
 var app = express();
 var server = http.createServer(app); 
 
-var logger = function (req, res, next) {
+var logger = (req, res, next) => {
     console.log(req.connection.remoteAddress + " tried to access : " + req.url);
 
     next(); // Passing the request to the next handler in the stack.
 }
 
 // Configuration
-app.configure(function () {
+app.configure(() => {
     // Session management
     app.use(express.cookieParser());
     app.use(express.session({secret: 'privateKeyForSession'}));
@@ -34,7 +34,7 @@ app.configure(function () {
 });
 
 // homepage
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.render('index.ejs', {
         isConnected: req.session.isConnected,
         isAdmin: req.session.isAdmin
@@ -42,7 +42,7 @@ app.get('/', function (req, res) {
 });
 
 // About page
-app.get('/about', function (req, res) {
+app.get('/about', (req, res) => {
     res.render('about.ejs', {
         isConnected: req.session.isConnected,
         isAdmin: req.session.isAdmin
@@ -50,7 +50,7 @@ app.get('/about', function (req, res) {
 });
 
 // Login
-app.get('/login', function (req, res) {
+app.get('/login', (req, res) => {
     isConnected = req.session.isConnected;
     if (isConnected) {
         utils.redirect(req, res, '/');
@@ -65,7 +65,7 @@ app.get('/login', function (req, res) {
 });
 
 // Login
-app.post('/login', function (req, res) {
+app.post('/login', (req, res) => {
 
     isConnected = req.session.isConnected;
     if (isConnected) {
@@ -79,7 +79,7 @@ app.post('/login', function (req, res) {
             utils.redirect(req, res, '/login')
         }
 
-        model.getUser(username, function (returnUser) {
+        model.getUser(username, returnUser => {
             password = crypto.createHash('sha256').update(password).digest('hex');
             if (returnUser && returnUser.password == password) {
                 console.log('Login OK with user:' + username);
@@ -98,7 +98,7 @@ app.post('/login', function (req, res) {
 });
 
 // Sign up
-app.get('/sign-up', function (req, res) {
+app.get('/sign-up', (req, res) => {
     res.render('sign-up.ejs', {
         isConnected: false,
         message: req.session.message
@@ -107,7 +107,7 @@ app.get('/sign-up', function (req, res) {
 });
 
 // Create an account
-app.post('/sign-up', function (req, res) {
+app.post('/sign-up', (req, res) => {
     username = req.body.username;
     password = req.body.password;
     if (username == undefined || username == null || username =="") {
@@ -116,7 +116,7 @@ app.post('/sign-up', function (req, res) {
         utils.redirect(req, res, '/sign-up')
     }
 
-    model.getUser(username, function (user) {
+    model.getUser(username, user => {
         if (user == null) {
             model.createUser(username, password, false);
             utils.redirect(req, res, '/login');
@@ -128,18 +128,18 @@ app.post('/sign-up', function (req, res) {
 });
 
 // bootstrap help 
-app.get('/bootstrap', function (req, res) {
+app.get('/bootstrap', (req, res) => {
     res.render('bootstrap.ejs', {
         isConnected: false
     });
 });
 
 // List users
-app.get('/users', function (req, res) {
+app.get('/users', (req, res) => {
     if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
-        model.getUsers(function (usersModel) {
+        model.getUsers(usersModel => {
             res.render('users.ejs', {
                 isConnected: req.session.isConnected,
                 users: usersModel,
@@ -150,14 +150,14 @@ app.get('/users', function (req, res) {
 });
 
 // Get messages from one specific user
-app.get('/messages', function (req, res) {
+app.get('/messages', (req, res) => {
    if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
-        model.getMessages(req.session.username, function (messages) {
+        model.getMessages(req.session.username, messages => {
             res.render('messages.ejs', {
                 isConnected: req.session.isConnected,
-                messages: messages,
+                messages,
                 isAdmin: req.session.isAdmin
             });
         });
@@ -165,14 +165,14 @@ app.get('/messages', function (req, res) {
 });
 
 // Get messages from one specific user
-app.get('/send-message', function (req, res) {
+app.get('/send-message', (req, res) => {
    if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
-        model.getUsers(function (users) {
+        model.getUsers(users => {
             res.render('send-message.ejs', {
                 isConnected: req.session.isConnected,
-                users: users,
+                users,
                 username: req.session.username,
                 message: req.session.message,
                 isAdmin: req.session.isAdmin
@@ -182,7 +182,7 @@ app.get('/send-message', function (req, res) {
 });
 
 // Send message
-app.post('/send-message', function (req, res) {
+app.post('/send-message', (req, res) => {
    if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
@@ -203,7 +203,7 @@ app.post('/send-message', function (req, res) {
     }
 });
 
-app.get('/change-password', function (req, res) {
+app.get('/change-password', (req, res) => {
    if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
@@ -217,7 +217,7 @@ app.get('/change-password', function (req, res) {
 });
 
 // Update password
-app.post('/change-password', function (req, res) {
+app.post('/change-password', (req, res) => {
    if (!req.session.isConnected) {
         utils.redirect(req, res, '/login');
     } else {
@@ -235,7 +235,7 @@ app.post('/change-password', function (req, res) {
 });
 
 // hint page, found it?
-app.get('/hint', function (req, res) {
+app.get('/hint', (req, res) => {
     res.render('hint.ejs', {
         isConnected: req.session.isConnected,
         isAdmin: req.session.isAdmin
@@ -243,7 +243,7 @@ app.get('/hint', function (req, res) {
 });
 
 // logout
-app.get('/logout', function (req, res) {
+app.get('/logout', (req, res) => {
     delete req.session.isConnected;
     delete req.session.username;
     delete req.session.isAdmin;
