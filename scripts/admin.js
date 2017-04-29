@@ -1,17 +1,16 @@
 // Example using HTTP POST operation
-var page = require('webpage').create(),
-    data = 'username=spiderman&password=CrazyPassword!';
+var page = require('webpage').create();
+
+var data = 'username=spiderman&password=CrazyPassword!';
 
 var matches_array = []
 
-page.open('http://127.0.0.1:8081/login', 'post', data, function (status) {
+page.open('http://127.0.0.1:8081/login', 'post', data, status => {
     if (status !== 'success') {
         console.log('Unable to post!');
     } else {
-        page.open('http://127.0.0.1:8081/messages', function (){
-            var table = page.evaluate(function () {
-                return document.getElementsByTagName('table')[0];
-            });
+        page.open('http://127.0.0.1:8081/messages', () => {
+            var table = page.evaluate(() => document.getElementsByTagName('table')[0]);
             matches_array = table.innerHTML.match(/(http:\/\/[-\/\.\w:0-9\?&]+)/gi);
             console.log(matches_array);
             process();
@@ -31,8 +30,8 @@ function process() {
 
 function accessPage(url, process) {
     console.log('Accessing: '+ url);
-    page.open(url, function (){
-        setTimeout(function () {
+    page.open(url, () => {
+        setTimeout(() => {
             process();
         }, 10000);
     });

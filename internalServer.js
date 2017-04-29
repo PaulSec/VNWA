@@ -11,13 +11,13 @@ var model = require('./lib/model.js');
 var app = express();
 var server = http.createServer(app); 
 
-var logger = function (req, res, next) {
+var logger = (req, res, next) => {
     console.log(req.connection.remoteAddress + " tried to access : " + req.url);
     next(); // Passing the request to the next handler in the stack.
 }
 
 // Configuration
-app.configure(function () {
+app.configure(() => {
     // Session management
     app.use(express.cookieParser());
     app.use(express.session({secret: 'privateKeyForSession'}));
@@ -33,7 +33,7 @@ app.configure(function () {
 });
 
 
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
     res.render('ping.ejs', {
         isConnected: req.session.isConnected,
         isAdmin: req.session.isAdmin
@@ -41,7 +41,7 @@ app.get('/', function (req, res) {
 });
 
 // Update password
-app.post('/', function (req, res) {
+app.post('/', (req, res) => {
     ip = req.body.ip
     if (ip == "") {
         utils.redirect(req, res, '/ping-status');
@@ -49,7 +49,7 @@ app.post('/', function (req, res) {
         // getting the command with req.params.command
         var child;
         // console.log(req.params.command);
-        child = exec('ping ' + ip, function (error, stdout, stderr) {
+        child = exec('ping ' + ip, (error, stdout, stderr) => {
             res.render('ping.ejs', {
                 isConnected: req.session.isConnected,
                 message: stdout,
@@ -59,6 +59,6 @@ app.post('/', function (req, res) {
     }
 });
 
-server.listen(9000, '127.0.0.1', function() {
+server.listen(9000, '127.0.0.1', () => {
   console.log("Listening on port 9000");
 });
